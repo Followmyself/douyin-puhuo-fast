@@ -1,0 +1,3 @@
+display_name: 抖音快速铺货
+short_description: VPN 下通过晓风内部路由完成抖店批量铺货、记录校验和上架验证。
+default_prompt: 按 douyin-puhuo-fast 流程帮我从罗盘选品并用晓风批量铺货，先小批量验证，再继续扩大数量。
