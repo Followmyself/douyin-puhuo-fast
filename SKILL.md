@@ -1,104 +1,123 @@
 ---
 name: douyin-puhuo-fast
-description: 抖音小店快速铺货 — 从罗盘选品→晓风截流→1688以图搜款→单店发布→记录校验。用于抖音店铺货、选品上架、批量铺货。当用户提到"铺货"、"上货"、"抖店铺货"、"1688铺货"时使用。
+description: Douyin (TikTok Shop) rapid product publishing — from Douyin Compass product selection → Xiaofeng interception → 1688 image-based sourcing → single-store publish → record verification. Use when the user mentions publishing products, sourcing from 1688, or batch listing to Douyin Shop.
 ---
 
-# 抖音快速铺货 Skill (v2)
+# Douyin Rapid Product Publishing Skill (v2)
 
-## 一句话
+## TL;DR
 
-从抖店罗盘搜索词选品 → 晓风1688以图搜款 → 单店铺货，一条命令搞定。
+Select products from Douyin Compass search terms → Xiaofeng 1688 image-based sourcing → single-store publish, all in one command.
 
-## 前置条件
+## Prerequisites
 
 - Windows 11 + Python 3.10+
-- Microsoft Edge（系统 Default profile 已登录抖店/罗盘/晓风）
-- 晓风电商助手扩展（`gcfohjiejngbnepafbldkbmjgeclehdn`）
-- Playwright：`pip install playwright`
+- Microsoft Edge (system Default profile logged into Douyin Shop / Compass / Xiaofeng)
+- Xiaofeng E-commerce Assistant extension (`gcfohjiejngbnepafbldkbmjgeclehdn`)
+- Playwright: `pip install playwright`
 
-## 快速使用
+## Quick Start
 
-### 一条命令铺货
+### One-command publishing
 
 ```powershell
 cd "$env:USERPROFILE\desktop\vscode\claude-code-douyin-operator"
-python scripts/puhuo.py --word <搜索词> --count <数量>
+python scripts/puhuo.py --word <search_term> --count <number>
 ```
 
-**示例**：
+**Examples**:
 
 ```powershell
-# 铺3件雨伞
-python scripts/puhuo.py --word 雨伞 --count 3
+# Publish 3 umbrella products
+python scripts/puhuo.py --word umbrella --count 3
 
-# 铺5件T恤，网络慢加大等待
-python scripts/puhuo.py --word T恤 --count 5 --wait-scale 3.0
+# Publish 5 T-shirt products with longer wait for slow network
+python scripts/puhuo.py --word "t-shirt" --count 5 --wait-scale 3.0
 ```
 
-### 分步执行（调试用）
+### Step-by-step (for debugging)
 
 ```powershell
-# 1. 提取候选商品
-python scripts/xf_extract_products_100.py --word 雨伞 --target 120
+# 1. Extract candidate products from Compass
+python scripts/xf_extract_products_100.py --word umbrella --target 120
 
-# 2. 逐个铺货（单产品闭环）
+# 2. Publish one by one (single-product closed loop)
 python scripts/xf_puhuo_publish_each.py --start 0 --limit 3 --target 3 --wait-scale 2.0
 ```
 
-## 核心原则
+## Core Principles
 
-1. **按曝光排序**：候选商品按"商品曝光用户数"从高到低
-2. **单产品闭环**：每个商品独立完成"找1688源→去抖音铺货→打开预览→单店铺货"
-3. **1688去重**：同一1688货源ID不重复铺货（除非 `--allow-duplicate-goods`）
-4. **不自动上架**：铺货后商品为"已下架"状态，需手动上架
-5. **不批量添加预览**：晓风预览列表不稳定，不能批量添加后再批量发布
+1. **Sort by exposure**: Candidate products are sorted by "product exposure users" from high to low
+2. **Single-product closed loop**: Each product independently completes: find 1688 source → publish to Douyin → open preview → single-store publish
+3. **1688 deduplication**: The same 1688 source ID is never published twice (unless `--allow-duplicate-goods` is set)
+4. **No auto-listing**: Products are in "delisted" status after publishing; manual listing is required
+5. **No batch preview**: Xiaofeng's preview list is unstable — never batch-add then batch-publish
 
-## 工作流
+## Workflow
 
 ```
-罗盘搜索词 → 词下热门商品（按曝光排序）→ 晓风截图 → 1688以图搜款
-    → 选1688货源（去重、排除品牌/侵权）→ 去抖音铺货 → 获取商品数据
-    → 打开铺货预览 → 单店铺货 → 提交成功（审核通过/已下架）
+Compass search term → Hot products under term (sorted by exposure) → Xiaofeng interception
+    → 1688 image-based sourcing → Select 1688 source (dedup, exclude brand/infringement risks)
+    → Publish to Douyin → Fetch product data → Open preview list → Single-store publish
+    → Submit success (under review / delisted)
 ```
 
-## 弹窗处理
+## Popup Handling
 
-| 弹窗 | 操作 |
-|------|------|
-| "有未提交的铺货数据" | 点击"继续铺货" |
-| 尺码/规格异常警告 | 点击"保留商品，继续发布" |
-| 侵权风险提示 | 点击"保留商品，继续发布" |
-| 页面空白 | 重新打开晓风页面（带时间戳URL） |
+| Popup | Action |
+|-------|--------|
+| "Unsubmitted publishing data" | Click "Continue publishing" |
+| Size/spec warning | Click "Keep product and continue" |
+| Infringement risk warning | Click "Keep product and continue" |
+| Blank page | Re-open Xiaofeng page with timestamped URL |
 
-## 铺货后校验
+## Post-Publish Verification
 
 ```powershell
-# 校验晓风上货记录
+# Verify Xiaofeng publishing records
 python scripts/xf_check_move_variants.py
 
-# 查看抖店商品状态
+# Check Douyin Shop product status
 python scripts/dy_probe_target_goods.py
 ```
 
-## 报告解读
+## Report Interpretation
 
-报告文件：`reports/xf_puhuo_publish_each_<start>_<limit>.json`
+Report file: `reports/xf_puhuo_publish_each_<start>_<limit>.json`
 
-常见状态：
-- `published_clicked` + 非空 `submitted_ids`：**铺货成功**
-- `no_candidate`：没有符合条件的1688货源
-- `duplicate_candidate`：所有货源都已铺过（去重拦截）
-- `all_sources_failed`：所有尝试的货源都获取数据失败
-- `unknown_after_click`：点击"去抖音铺货"后未进入预览状态
+Common statuses:
 
-## 项目目录
+| Status | Meaning |
+|--------|---------|
+| `published_clicked` + non-empty `submitted_ids` | **Publish successful** |
+| `no_candidate` | No suitable 1688 source found |
+| `duplicate_candidate` | All sources already published (dedup blocked) |
+| `not_enough_items` | Preview list empty — 1688 source has no distributable data |
+| `all_sources_failed` | All attempted sources failed to fetch product data |
+| `unknown_after_click` | Did not enter preview state after clicking publish |
 
-所有脚本位于：`$env:USERPROFILE\desktop\vscode\claude-code-douyin-operator\scripts\`
+## Known Bug Fix (v2)
 
-## 禁用项（不要用）
+### `fetch_failed` False Positive
 
-- 不要用 `xf_puhuo_fast_runner.py`
-- 不要用 `xf_to_preview_batch.py` 批量添加预览
-- 不要用 `xf_publish_preview_batch.py` 批量发布
-- 不要为了凑成功数而扩大候选范围
-- 不要重复铺同一1688货源ID
+**Root cause**: The code checked `"失败" (failed) in text` to detect fetch failures, but the summary line always contains `"成功 15, 失败 5"` (15 succeeded, 5 failed), causing **every product to be falsely flagged as failed**.
+
+**Fix**: Changed to only check whether the currently selected 1688 ID's specific line contains failure keywords, not the global summary.
+
+### "Open Preview List" Button Detection
+
+**Root cause**: The modal search required a single div to contain both `"获取商品数据"` and `"打开铺货预览列表"`, but they may appear in separate elements.
+
+**Fix**: Three-tier button search strategy: (1) scope within "fetch data" modal → (2) document-wide search → (3) any clickable element containing the text. Added retry loop with up to 5 attempts.
+
+## Project Directory
+
+All scripts are located at: `$env:USERPROFILE\desktop\vscode\claude-code-douyin-operator\scripts\`
+
+## Disabled (Do Not Use)
+
+- Do not use `xf_puhuo_fast_runner.py`
+- Do not use `xf_to_preview_batch.py` for batch preview
+- Do not use `xf_publish_preview_batch.py` for batch publishing
+- Do not expand candidate range just to inflate success count
+- Do not publish the same 1688 source ID twice

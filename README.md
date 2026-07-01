@@ -1,48 +1,56 @@
-# 抖音快速铺货 Skill (douyin-puhuo-fast)
+# Douyin Rapid Product Publishing Skill (douyin-puhuo-fast)
 
-抖音小店快速批量铺货自动化工具。从罗盘选品 → 晓风截流 → 1688以图搜款 → 抖店铺货，一条命令完成。
+Automated rapid batch product publishing for Douyin (TikTok) Shop. From Compass product selection → Xiaofeng interception → 1688 image-based sourcing → Douyin Shop publishing — all in one command.
 
-## 快速开始
+## Quick Start
 
 ```powershell
 cd "$env:USERPROFILE\desktop\vscode\claude-code-douyin-operator"
 
-# 一键铺货 3 件雨伞
-python scripts/puhuo.py --word 雨伞 --count 3
+# Publish 3 umbrella products
+python scripts/puhuo.py --word umbrella --count 3
 
-# 铺货 5 件T恤
-python scripts/puhuo.py --word T恤 --count 5
+# Publish 5 T-shirt products
+python scripts/puhuo.py --word "t-shirt" --count 5
 ```
 
-## 环境要求
+## Requirements
 
 - Windows 11
-- Python 3.10+ （Playwright）
-- Microsoft Edge 浏览器（系统 Default profile 已登录）
-- 晓风电商助手扩展 v30.3.3
+- Python 3.10+ (with Playwright)
+- Microsoft Edge browser (system Default profile, logged in)
+- Xiaofeng E-commerce Assistant extension v30.3.3
 
-## 脚本说明
+## Scripts
 
-| 脚本 | 用途 |
-|------|------|
-| `scripts/puhuo.py` | **一键铺货**（推荐） |
-| `scripts/xf_extract_products_100.py` | 从罗盘提取候选商品 |
-| `scripts/xf_puhuo_publish_each.py` | 逐个商品闭环铺货 |
-| `scripts/xf_check_move_variants.py` | 校验晓风上货记录 |
-| `scripts/dy_probe_target_goods.py` | 查看抖店商品状态 |
-| `scripts/dy_relist_three.py` | 抖店批量上架 |
+| Script | Purpose |
+|--------|---------|
+| `scripts/puhuo.py` | **One-command publishing** (recommended) |
+| `scripts/xf_extract_products_100.py` | Extract candidate products from Compass |
+| `scripts/xf_puhuo_publish_each.py` | Single-product closed-loop publishing |
+| `scripts/xf_check_move_variants.py` | Verify Xiaofeng publishing records |
+| `scripts/dy_probe_target_goods.py` | Check Douyin Shop product status |
+| `scripts/dy_relist_three.py` | Batch listing on Douyin Shop |
 
-## 目录结构
+## Directory Structure
 
 ```
 douyin-puhuo-fast/
-├── SKILL.md                    # Skill 定义文件
-├── README.md                   # 本文件
+├── SKILL.md                    # Skill definition (core document)
+├── README.md                   # This file
 └── references/
-    └── puhuo-workflow.md       # 详细工作流文档
+    └── puhuo-workflow.md       # Detailed workflow documentation
 ```
 
-脚本位于项目目录：`$env:USERPROFILE\desktop\vscode\claude-code-douyin-operator\scripts\`
+Scripts are located in the project directory: `$env:USERPROFILE\desktop\vscode\claude-code-douyin-operator\scripts\`
+
+## Key Principles
+
+1. Products are sorted by exposure users (high to low) before publishing
+2. Single-product closed loop: one product at a time, end to end
+3. 1688 source IDs are deduplicated across runs
+4. Products are NOT auto-listed after publishing (manual listing required)
+5. No batch preview or batch publish — Xiaofeng preview list is unstable
 
 ## License
 
